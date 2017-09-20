@@ -12,17 +12,21 @@
    ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  '(blink-cursor-mode nil)
  '(column-number-mode t)
- '(custom-enabled-themes (quote (zenmerge)))
+ '(company-idle-delay 0.25)
+ '(company-show-numbers t)
+ '(custom-enabled-themes (quote (leuven)))
  '(custom-safe-themes
    (quote
-    ("4835f1f6ca064b1c54e0129b419efbf496f1138e605e664a0319e30dce5a6eaa" "c90cbe0f12402990ab1e3d3812e4f12b1dc33bd32c5afd479495deef3ca9bc15" default)))
+    ("9a155066ec746201156bb39f7518c1828a73d67742e11271e4f24b7b178c4710" "43c1a8090ed19ab3c0b1490ce412f78f157d69a29828aa977dae941b994b4147" "4af6fad34321a1ce23d8ab3486c662de122e8c6c1de97baed3aa4c10fe55e060" "b747fb36e99bc7f497248eafd6e32b45613ee086da74d1d92a8da59d37b9a829" "44c566df0e1dfddc60621711155b1be4665dd3520b290cb354f8270ca57f8788" "31992d4488dba5b28ddb0c16914bf5726dc41588c2b1c1a2fd16516ea92c1d8e" "4835f1f6ca064b1c54e0129b419efbf496f1138e605e664a0319e30dce5a6eaa" "c90cbe0f12402990ab1e3d3812e4f12b1dc33bd32c5afd479495deef3ca9bc15" default)))
  '(fast-but-imprecise-scrolling nil)
  '(fci-rule-color "#383838")
  '(mouse-wheel-scroll-amount (quote (1 ((shift) . 5) ((control)))))
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
- '(package-selected-packages (quote (expand-region git-gutter)))
+ '(package-selected-packages
+   (quote
+    (leuven-theme gandalf-theme silkworm-theme github-modern-theme eink-theme async helm company-jedi company expand-region git-gutter)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(save-place t)
  '(scroll-bar-mode nil)
@@ -57,7 +61,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Consolas" :foundry "outline" :slant normal :weight normal :height 113 :width normal)))))
+ '(default ((t (:family "Source Code Pro" :foundry "outline" :slant normal :weight normal :height 113 :width normal)))))
 (global-set-key (kbd "C-x <up>") 'windmove-up)
 (global-set-key (kbd "C-x <down>") 'windmove-down)
 (global-set-key (kbd "C-x <left>") 'windmove-left)
@@ -79,3 +83,36 @@
 
 (require 'expand-region)
 (global-set-key (kbd "C-=") 'er/expand-region)
+(add-hook 'after-init-hook 'global-company-mode)
+
+(defun my/python-mode-hook ()
+  (add-to-list 'company-backends 'company-jedi))
+
+(add-hook 'python-mode-hook 'my/python-mode-hook)
+
+(require 'helm)
+(require 'helm-config)
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+(setq helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+      helm-ff-file-name-history-use-recentf t
+      helm-echo-input-in-header-line t)
+
+(setq helm-autoresize-max-height 0)
+(setq helm-autoresize-min-height 20)
+(helm-autoresize-mode t)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-c h o") 'helm-occur)
+
+(helm-mode 1)
